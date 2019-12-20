@@ -1,0 +1,100 @@
+﻿<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Alert.ly 2.0</title>
+    <meta name="description" content="Alert.ly App - Rapid fire emergency alerts.">
+    <meta name="author" content="Sibel Tanoglu">
+
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+
+        var time = 0;
+
+        function getData() {
+
+            $.getJSON("/data")
+                .done(function (data) {
+
+                    
+
+                    $.each(data, function (i, item) {
+
+
+                        if (item.emergency === "1") {
+                            setTimeout(function () {
+
+                                var text = "ALERT! Fire Emergency At " + item.time;
+                                $("#no-fire-image").hide();
+                                $("#fire-image").show()
+                                    .fadeOut(300).delay(200).fadeIn(300)
+                                    .fadeOut(300).delay(200).fadeIn(300);
+
+                                $("#log").prepend('<li class="log-fire">' + text + '</li>');
+                                $("#result-text").text(text)
+                                    .fadeOut(300).delay(200).fadeIn(300)
+                                    .fadeOut(300).delay(200).fadeIn(300);
+
+                            }, time);
+
+                            time += 2000;
+                        }
+                        else {
+
+                            setTimeout(function () {
+
+                                var text = "No Emergency At " + item.time;
+                                $("#fire-image").hide();
+                                $("#no-fire-image").show();
+
+                                $("#log").prepend('<li>' + text + '</li>');
+                                $("#result-text").text(text);
+
+                            }, time);
+
+                            time += 200;
+                        }
+                    });
+
+                    
+
+                });
+        }
+    </script>
+
+</head>
+
+<body>
+    <h1>Alert.ly 2.0</h1>
+    <p>Rapid alerts about emgergencies during a wildfire, in close to real time utilizing Twitter activity.</p>
+
+    <div class="form-result-container">
+
+        <div class="action">
+            <button onclick="getData()">Get Tweets</button>
+
+            <div class="log-container">
+                <ul id="log"></ul>
+            </div>
+
+        </div>
+
+        <div id="result-container" class="result-container {{result_Css}}">
+            <img id="fire-image" src="/static/twitter-logo-fire.svg" alt="twitter-logo">
+            <img id="no-fire-image" src="/static/twitter-logo.svg" alt="twitter-logo">
+            <p id="result-text" class="result-text">{{result_message}}</p>
+        </div>
+
+    </div>
+
+
+
+
+
+
+</body>
+</html>
